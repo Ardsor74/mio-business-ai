@@ -24,7 +24,7 @@ if st.button("ANALIZZA CON AI"):
                 testo = " ".join([p.get_text() for p in soup.find_all('p')[:10]])
 
                 # 2. Chiediamo a Gemini di analizzare
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                model = genai.GenerativeModel('gemini-pro')
                 prompt = f"Analizza questo testo di un sito web: {testo}. Dimmi in 3 punti elenco quali sono i punti di forza e una criticità evidente per le vendite."
                 response = model.generate_content(prompt)
                 
