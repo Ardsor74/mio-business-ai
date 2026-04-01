@@ -34,7 +34,7 @@ if st.button("AVVIA ANALISI INTELLIGENTE"):
                 contesto = " ".join(testi)
 
                 # 2. Generazione Analisi con Gemini
-                model = genai.GenerativeModel('gemini-1.5-flash-001')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 
                 prompt = f"""
                 Analizza questo contenuto web: "{contesto}"
