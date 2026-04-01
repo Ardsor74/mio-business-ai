@@ -23,7 +23,7 @@ if st.button("AVVIA ANALISI"):
 
                 # 2. CHIAMATA DIRETTA API (Senza librerie intermedie che danno errore)
                 # Usiamo la versione 'v1' invece di 'v1beta'
-                api_url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
+                api_url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={api_key}"
                 
                 payload = {
                     "contents": [{
