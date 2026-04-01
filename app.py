@@ -23,9 +23,11 @@ if st.button("ANALIZZA CON AI"):
                 soup = BeautifulSoup(res.text, 'html.parser')
                 testo = " ".join([p.get_text() for p in soup.find_all('p')[:10]])
 
-                # 2. Chiediamo a Gemini di analizzare
-                model = genai.GenerativeModel('gemini-pro')
-                prompt = f"Analizza questo testo di un sito web: {testo}. Dimmi in 3 punti elenco quali sono i punti di forza e una criticità evidente per le vendite."
+                # 2. Chiediamo a Gemini di analizzare (Versione stabile 2026)
+                model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                prompt = f"Analizza questo testo di un sito web di un'azienda locale: {testo}. Dimmi in 3 punti elenco molto brevi cosa vendono e un consiglio per migliorare i profitti."
+                
+                # Questa riga forza il sistema a parlare
                 response = model.generate_content(prompt)
                 
                 st.success("✅ Analisi Intelligente Generata!")
