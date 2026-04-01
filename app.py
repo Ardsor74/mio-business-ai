@@ -3,67 +3,65 @@ import requests
 from bs4 import BeautifulSoup
 import google.generativeai as genai
 
-# 1. Configurazione Iniziale
-st.set_page_config(page_title="NEXUS AI - Business Guard", page_icon="🛡️")
+# --- CONFIGURAZIONE PAGINA ---
+st.set_page_config(page_title="NEXUS AI - Business Guard", page_icon="🛡️", layout="centered")
 
-# Caricamento sicuro della Chiave API dai Secrets di Streamlit
+# --- CONNESSIONE AI (GOOGLE GEMINI) ---
 if "GOOGLE_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 else:
-    st.error("⚠️ Chiave API mancante! Inseriscila nei Secrets di Streamlit come GOOGLE_API_KEY")
+    st.error("⚠️ Errore: Chiave API non trovata nei Secrets di Streamlit!")
 
-# 2. Interfaccia Grafica
+# --- INTERFACCIA UTENTE ---
 st.title("🛡️ NEXUS AI - Business Guard")
-st.markdown("### Analisi Intelligente dell'Attività")
-st.write("Inserisci l'URL del sito per scoprire i punti deboli e le opportunità di crescita.")
+st.subheader("Trasforma i visitatori in clienti con l'Intelligenza Artificiale")
+st.write("Analizza il tuo sito web per scoprire come migliorare la tua presenza online.")
 
-url_cliente = st.text_input("URL del sito (es. https://pasticceria.it)", placeholder="https://...")
+url_input = st.text_input("Inserisci l'URL del sito (es. https://pasticceria.it)", placeholder="https://...")
 
-if st.button("ANALIZZA CON AI"):
-    if url_cliente:
-        with st.spinner("L'AI sta scansionando il sito e generando l'analisi..."):
+if st.button("AVVIA ANALISI INTELLIGENTE"):
+    if url_input:
+        with st.spinner("🤖 L'AI sta studiando il sito..."):
             try:
-                # Scansione del sito
+                # 1. Recupero dati dal sito
                 headers = {'User-Agent': 'Mozilla/5.0'}
-                response = requests.get(url_cliente, headers=headers, timeout=10)
-                soup = BeautifulSoup(response.text, 'html.parser')
+                res = requests.get(url_input, headers=headers, timeout=10)
+                soup = BeautifulSoup(res.text, 'html.parser')
                 
-                # Estrazione testo (titolo + primi paragrafi)
-                titolo_sito = soup.title.string if soup.title else "Azienda analizzata"
-                paragrafi = [p.get_text() for p in soup.find_all('p')[:12]]
-                testo_sito = " ".join(paragrafi)
+                # Pulizia testo per l'AI
+                titolo = soup.title.string if soup.title else "Sito Web"
+                testi = [p.get_text() for p in soup.find_all(['p', 'li'])[:15]]
+                contesto = " ".join(testi)
 
-                # Chiamata a Gemini (Modello Flash 1.5 - il più veloce)
-                model = genai.GenerativeModel('gemini-pro')
+                # 2. Generazione Analisi con Gemini
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 
                 prompt = f"""
-                Analizza questo testo tratto dal sito web di {titolo_sito}:
-                ---
-                {testo_sito}
-                ---
-                Agisci come un esperto di marketing digitale. 
-                1. Riassumi brevemente cosa offre questa azienda.
-                2. Elenca 3 criticità o punti deboli evidenti nel sito o nella comunicazione.
-                3. Spiega perché dovrebbero usare un assistente AI per rispondere alle recensioni.
-                Rispondi in modo professionale e convincente in italiano.
+                Analizza questo contenuto web: "{contesto}"
+                Sei un esperto di marketing digitale. Scrivi un'analisi breve per il proprietario del sito:
+                1. Cosa fa l'azienda (in una frase).
+                2. Un punto di forza che salta all'occhio.
+                3. Una grave mancanza che sta facendo perdere soldi (es. mancanza di chatbot, recensioni non gestite, call to action debole).
+                Sii molto convincente e professionale. Lingua: Italiano.
                 """
                 
-                risposta_ai = model.generate_content(prompt)
-                
-                # Visualizzazione Risultati
-                st.success(f"✅ Analisi completata per: {titolo_sito}")
+                response = model.generate_content(prompt)
+
+                # 3. Risultati a schermo
+                st.success(f"✅ Analisi completata per: {titolo}")
                 st.markdown("---")
-                st.markdown(risposta_ai.text)
+                st.markdown(response.text)
                 st.markdown("---")
                 
-                # Conclusione e Vendita
-                st.warning("🚨 **OPPORTUNITÀ PERSA:** Questa attività non sta rispondendo a tutte le domande dei clienti su Google Maps.")
-                st.write("Vuoi automatizzare la crescita di questo business?")
-                st.link_button("🚀 ATTIVA ASSISTENTE AI A 29€/MESE", "https://stripe.com/it")
+                # Sezione Vendita
+                st.info("💡 **Consiglio dell'esperto:** Questo business potrebbe raddoppiare le conversioni integrando un assistente AI attivo 24/7.")
+                st.link_button("🎁 ATTIVA IL TUO ASSISTENTE A 29€", "https://stripe.com/it")
 
             except Exception as e:
-                st.error(f"Si è verificato un errore durante l'analisi: {e}")
+                st.error(f"Impossibile analizzare il sito. Verifica il link. Errore: {e}")
     else:
-        st.warning("Inserisci un URL valido per iniziare.")
+        st.warning("Inserisci un link prima di cliccare.")
 
-st.sidebar.info("NEXUS AI v1.2 - Powered by Gemini 1.5 Flash")
+# --- SIDEBAR ---
+st.sidebar.markdown("### NEXUS AI v2.0")
+st.sidebar.write("Sistema di monitoraggio reputazione e vendite automatiche.")
