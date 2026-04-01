@@ -23,21 +23,14 @@ if st.button("ANALIZZA CON AI"):
                 soup = BeautifulSoup(res.text, 'html.parser')
                 testo = " ".join([p.get_text() for p in soup.find_all('p')[:10]])
 
-                # 2. Chiediamo a Gemini di analizzare (Versione stabile 2026)
-                model = genai.GenerativeModel('gemini-1.5-flash-latest')
-                prompt = f"Analizza questo testo di un sito web di un'azienda locale: {testo}. Dimmi in 3 punti elenco molto brevi cosa vendono e un consiglio per migliorare i profitti."
+                # 2. Chiediamo a Gemini di analizzare (USIAMO IL MODELLO BASE SENZA VERSIONI STRANE)
+                model = genai.GenerativeModel('gemini-1.5-flash') # Prova a scriverlo proprio così, senza 'latest'
                 
-                # Questa riga forza il sistema a parlare
-                response = model.generate_content(prompt)
+                # Proviamo a generare il contenuto
+                response = model.generate_content(
+                    f"Analizza questo testo di un sito web: {testo}. Dimmi in 3 punti cosa vendono e un consiglio per migliorare.",
+                )
                 
-                st.success("✅ Analisi Intelligente Generata!")
+                st.success("✅ Analisi completata!")
                 st.markdown(response.text)
-                
-                st.divider()
-                st.info("💡 Consiglio Pro: Questa azienda ha bisogno di un assistente che risponda alle recensioni.")
-                st.link_button("ATTIVA ASSISTENTE A 29€", "https://stripe.com")
-                
-            except Exception as e:
-                st.error(f"Errore: {e}")
-
 # Ricordati di aggiungere 'google-generativeai' nel file requirements.txt!
