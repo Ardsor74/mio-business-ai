@@ -34,7 +34,7 @@ if st.button("ANALIZZA CON AI"):
                 testo_sito = " ".join(paragrafi)
 
                 # Chiamata a Gemini (Modello Flash 1.5 - il più veloce)
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                model = genai.GenerativeModel('gemini-pro')
                 
                 prompt = f"""
                 Analizza questo testo tratto dal sito web di {titolo_sito}:
